@@ -1,0 +1,20 @@
+.ImgSpamExperts-panelIcon {
+    background: url("spamexperts.gif") no-repeat 0 0;
+    height: 16px;
+    width: 16px;
+}
+.divspamexperts-settings {
+}
+
+.divspamexperts-settings span {
+    display: inline-table;
+    width: 150px;
+}
+
+.divspamexperts-settings input {
+    width: 200px;
+}
+
+#spamexperts_iframe #header {
+    display: none;
+}
