@@ -7,7 +7,6 @@
         <contextMenu>
             <menuItem label="${msg.menuItem1Label}" id="SPAMEXPERTS_MENU_ITEM_ID1" />
             <menuItem label="${msg.menuItem2Label}" id="SPAMEXPERTS_MENU_ITEM_ID2" />
-            <menuItem label="${msg.menuItem3Label}" id="SPAMEXPERTS_MENU_ITEM_ID3" />
         </contextMenu>
     </zimletPanelItem>
 </zimlet>

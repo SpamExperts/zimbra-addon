@@ -7,15 +7,16 @@ SpamExpertsZimlet.prototype.constructor = SpamExpertsZimlet;
 SpamExpertsZimlet.BUTTON_ID = "SpamExpertsZimletBtn";
 
 SpamExpertsZimlet.prototype.init = function() {
+    var currentUserEmail = appCtxt.getActiveAccount().getEmail();
 
-    this.spamexperts_controlPanelUrl = (this.getUserProperty("spamexperts_controlPanelUrl") != undefined)
-        ? this.getUserProperty("spamexperts_controlPanelUrl") : "";
-    this.spamexperts_controlPanelUsername = (this.getUserProperty("spamexperts_controlPanelUsername") != undefined)
-        ? this.getUserProperty("spamexperts_controlPanelUsername") : "";
-    this.spamexperts_controlPanelPassword = (this.getUserProperty("spamexperts_controlPanelPassword") != undefined)
-        ? this.getUserProperty("spamexperts_controlPanelPassword") : "";
     this.spamexperts_moveToTrash = (this.getUserProperty("spamexperts_moveToTrash") != undefined)
         ? this.getUserProperty("spamexperts_moveToTrash") : 0;
+
+    this.spamexperts_controlPanelUrl = this.getConfig("panelUrl");
+    this.spamexperts_controlPanelUsername = this.getConfig("panelAdmin");
+    this.spamexperts_controlPanelPassword = this.getConfig("panelPassword");
+
+    this.spamexperts_controlPanelEmailUser = currentUserEmail;
 };
 
 //define zimblet actions
@@ -25,24 +26,15 @@ SpamExpertsZimlet.prototype.menuItemSelected =
         switch (itemId) {
             //display popup for settings
             case "SPAMEXPERTS_MENU_ITEM_ID1":
-                if (!this._controlPanelSettingsDialog) {
-                    this._controlPanelSettingsDialog = this.openSettingsPopup('controlPanelSettings');
-                }
-                break;
-            case "SPAMEXPERTS_MENU_ITEM_ID2":
                 if (this.spamexperts_controlPanelUrl && this.spamexperts_controlPanelUsername && this.spamexperts_controlPanelPassword) {
                     //open new tab
                     if (this.spamexperts_app == undefined) {
                         this.spamexperts_app = this.createApp(this.getMessage("zimletName"), "zimbraIcon", "Control Panel");
                     }
-                } else {
-                    this._controlPanelSettingsErrDialog = this.openSettingsPopup('controlPanelSettingsErr');
                 }
                 break;
-            case "SPAMEXPERTS_MENU_ITEM_ID3":
-                //if (!this._reportSpamSettingsDialog) {
-                    this._reportSpamSettingsDialog = this.openSettingsPopup('reportSpamSettings');
-                //}
+            case "SPAMEXPERTS_MENU_ITEM_ID2":
+                this._reportSpamSettingsDialog = this.openSettingsPopup('reportSpamSettings');
                 break;
             default:
                 // do nothing
@@ -146,7 +138,6 @@ SpamExpertsZimlet.prototype.onActionMenuInitialized = function(controller, menu)
 	}
 };
 
-
 SpamExpertsZimlet.prototype._listSelectionListener = function(params, ev) {
 	if (params.mailListView.getSelectionCount() > 0) {
 		params.button.setEnabled(true);
@@ -178,80 +169,12 @@ SpamExpertsZimlet.prototype._reportSpam = function(msgId) {
                 // display the response
                 appCtxt.getAppController().setStatusMsg(this.getMessage("spamWasReported"));
 
-                //if (this.spamexperts_moveToTrash) {
+                if (this.spamexperts_moveToTrash) {
                     this._moveToTrash(msgId);
-                //}
+                }
 
             }), false);
         }
-};
-
-SpamExpertsZimlet.prototype._saveControlPanelSettings = function(app) {
-    //test credentials before saving
-    var urlValue = document
-        .getElementById("spamexperts_controlPanelUrl").value;
-    var usernameValue = document
-        .getElementById("spamexperts_controlPanelUsername").value;
-    var passwordValue = document
-        .getElementById("spamexperts_controlPanelPassword").value;
-
-    //try to test the credentials before saving them
-
-    //we will do an api call to get the version
-
-    var apiCall = "/api/version/get/format/json/";
-
-    var proxyServletUrl = [ZmZimletBase.PROXY, urlValue+apiCall].join("");
-
-    var reqParam = null;
-
-    //set auth token
-    var reqHeader = {"Authorization": "Basic " + btoa(usernameValue + ":" + passwordValue)};
-
-    var that = this;
-
-    AjxRpc.invoke(reqParam, proxyServletUrl, reqHeader,
-        new AjxCallback(this, function(response){
-
-            var isSuccess = false;
-
-            if (response.success == true) {
-                var r = JSON.parse(response.text);
-                if (r.result !== undefined && Math.abs(parseInt(r.result)) > 0) {
-                    isSuccess = true;
-                }
-            }
-
-            if (isSuccess) {
-
-                app.spamexperts_controlPanelUrl = urlValue;
-                app.spamexperts_controlPanelUsername = usernameValue;
-                app.spamexperts_controlPanelPassword = passwordValue;
-
-                app.setUserProperty("spamexperts_controlPanelUrl",
-                    app.spamexperts_controlPanelUrl);
-                app.setUserProperty("spamexperts_controlPanelUsername",
-                    app.spamexperts_controlPanelUsername);
-                app.setUserProperty("spamexperts_controlPanelPassword",
-                    app.spamexperts_controlPanelPassword);
-
-                 app.saveUserProperties();
-
-                appCtxt.getAppController().setStatusMsg(
-                    app.getMessage("settingsSaved"),
-                    ZmStatusView.LEVEL_INFO
-                );
-
-                app.controlPanelSettingsDialog.popdown();// hide the dialog
-                app.controlPanelSettingsErrDialog.popdown();
-            } else {
-                appCtxt.getAppController().setStatusMsg(
-                    app.getMessage("settingsNotSaved"),
-                    ZmStatusView.LEVEL_CRITICAL
-                );
-            }
-        }), false);
-
 };
 
 // Save settings for spam reporting
@@ -288,20 +211,10 @@ SpamExpertsZimlet.prototype.openSettingsPopup = function(settingsView) {
     var title = "";
 
     switch(settingsView) {
-        case 'controlPanelSettings':
-            view = this._getControlPanelSettingsView();
-            saveAction = this._saveControlPanelSettings;
-            title = this.getMessage("controlPanelSettings");
-            break;
         case 'reportSpamSettings':
             view = this._getReportSpamSettingsView();
             saveAction = this._saveReportSpamSettings;
             title = this.getMessage("reportSpamSettings");
-            break;
-        case 'controlPanelSettingsErr':
-            view = this._getControlPanelSettingsErrView() + this._getControlPanelSettingsView();
-            saveAction = this._saveControlPanelSettings;
-            title = this.getMessage("controlPanelSettings");
             break;
         default:
 
@@ -328,10 +241,6 @@ SpamExpertsZimlet.prototype.openSettingsPopup = function(settingsView) {
     this[popupName].popup();
 };
 
-SpamExpertsZimlet.prototype._getControlPanelSettingsErrView =  function() {
-    return "<p>"+this.getMessage("controlPanelSettingsErr")+"<p>";
-}
-
 SpamExpertsZimlet.prototype._getReportSpamSettingsView = function () {
     var html = new Array();
     var i = 0;
@@ -354,39 +263,17 @@ SpamExpertsZimlet.prototype._getReportSpamSettingsView = function () {
     return html.join("");
 }
 
-SpamExpertsZimlet.prototype._getControlPanelSettingsView = function() {
-    var html = new Array();
-    var i = 0;
-
-    html[i++] = "<div class='divspamexperts-settings'>";
-    html[i++] = "<p>";
-    html[i++] = "<span>"+this.getMessage("controlPanelUrl")+"</span>";
-    html[i++] = "<input type='text' value='"+this.spamexperts_controlPanelUrl
-        + "' id='spamexperts_controlPanelUrl' />";
-    html[i++] = "</p>";
-    html[i++] = "<p>";
-    html[i++] = "<span>"+this.getMessage("controlPanelUsername")+"</span>";
-    html[i++] = "<input type='text' value='"+this.spamexperts_controlPanelUsername
-        + "' id='spamexperts_controlPanelUsername' />";
-    html[i++] = "</p>";
-    html[i++] = "<p>";
-    html[i++] = "<span>"+this.getMessage("controlPanelPassword")+"</span>";
-    html[i++] = "<input type='password' value='"+this.spamexperts_controlPanelPassword
-        + "' id='spamexperts_controlPanelPassword' />";
-    html[i++] = "</p>";
-    html[i++] = "</div>";
-    return html.join("");
-};
-
 SpamExpertsZimlet.prototype._loginToControlPanel = function() {
 
     //create auth ticket
-    var apiCall = "/api/authticket/create/username/"+this.spamexperts_controlPanelUsername;
+    var apiCall = "/api/authticket/create/username/"+this.spamexperts_controlPanelEmailUser;
     var proxyServletUrl = [ZmZimletBase.PROXY, this.spamexperts_controlPanelUrl+apiCall].join("");
     var reqParam = null;
 
     //set auth token
     var reqHeader = {"Authorization": "Basic " + btoa(this.spamexperts_controlPanelUsername + ":" + this.spamexperts_controlPanelPassword)};
+
+    var that =  this;
 
     AjxRpc.invoke(reqParam, proxyServletUrl, reqHeader,
         new AjxCallback(this, function(response){
@@ -396,8 +283,14 @@ SpamExpertsZimlet.prototype._loginToControlPanel = function() {
             if (response.success == true) {
                 var token = response.text;
                 if (token.length == 40) {
-                    document.getElementById("spamexperts_iframe").src = this.spamexperts_controlPanelUrl+"/index.php?authticket="+token;
+                    var panelUrl = this.spamexperts_controlPanelUrl;
+                    panelUrl = panelUrl.replace("http://", "https://");
+                    document.getElementById("spamexperts_iframe").src = panelUrl+"/index.php?authticket="+token;
+                } else {
+                    appCtxt.getAppController().setStatusMsg("Error: " + that.getMessage("userNotAllowed"), ZmStatusView.LEVEL_CRITICAL);
                 }
+            } else {
+                appCtxt.getAppController().setStatusMsg("Error: " + that.getMessage("configError"), ZmStatusView.LEVEL_CRITICAL);
             }
 
         }), false);
@@ -409,8 +302,6 @@ SpamExpertsZimlet.prototype._moveToTrash = function(item) {
     if (item.type == ZmItem.CONV) {
         requestType = "ConvActionRequest";
     }
-
-    console.log(item.id);
 
     var soapDoc = AjxSoapDoc.create(requestType, "urn:zimbraMail");
 
