@@ -169,7 +169,7 @@ SpamExpertsZimlet.prototype._reportSpam = function(msgId) {
                 // display the response
                 appCtxt.getAppController().setStatusMsg(this.getMessage("spamWasReported"));
 
-                if (this.spamexperts_moveToTrash) {
+                if (this.spamexperts_moveToTrash != 0) {
                     this._moveToTrash(msgId);
                 }
 
