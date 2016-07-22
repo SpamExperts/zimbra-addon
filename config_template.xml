@@ -1,14 +1,18 @@
 <zimletConfig name="com_zimbra_spamexperts" version="1.0">
     <global>
-        <!-- list here domain allowed to make requests to. Keep *.spamrl.com to allow spa reporting -->
-        <property name="allowedDomains">*.yourserver.com,*.spamrl.com</property>
-        <!-- disable this Zimlet when Zimbra Web Client is used in http mode -->
-        <property name="hasSensitiveData">false</property>
+        <!-- Change it only if you want to use another spam report system -->
+        <property name="reportSpamUrl">https://spamreport.spamrl.com/spamreport.php</property>
 
         <!-- Spam Panel Url and admin credentials -->
         <!-- Make sure panelUrl value matches allowedDomains -->
         <property name="panelUrl">http://yourserver.com</property>
         <property name="panelAdmin">adminUsername</property>
         <property name="panelPassword">adminPassword</property>
+
+        <!-- list here domain allowed to make requests to. Values should match panelUrl and reportSpamUrl values -->
+        <property name="allowedDomains">*.yourserver.com,*.spamrl.com</property>
+
+        <!-- disable this Zimlet when Zimbra Web Client is used in http mode -->
+        <property name="hasSensitiveData">false</property>
     </global>
 </zimletConfig>

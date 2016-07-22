@@ -9,7 +9,11 @@ This zimlet provides the following functionality:
 For every email we have the possibility to report it as spam to our system, by clicking right click and select "Report Spam". 
 If the operation was successfull the message "Email was reported as spam".  
  
-In order to access Spam Filter panel, config_template.xml should contain an admin credentials.
+In order to access Spam Filter panel, config_template.xml should contain an admin credentials. This admin should own your domain in our Spam Filtering system.
+
+For custom branding, replace "zimletName" and "label" in com_zimbra_spamexperts.properties files. Default values are "SpamExperts".
+For a custom icon, just replace zimlet_icon.gif with your own. Be sure it will be a .gif file with dimensions 16x16 px.
+
 After all configuration is set up, you need to pack the addon (create a .zip archive with all sources file (com_zimbra_spamexperts.zip) ) and install it.
 
 Install the addon from cmd:
