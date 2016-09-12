@@ -48,4 +48,5 @@ By default, zimbra debug mode for zimlets is enabled and all the information can
 If for some reason, debug mode was disabled, it can be enabled for an admin user, after executing the following :
 
 su - zimbra
+
 zmprov addAccountLogger <your admin user email address> zimbra.zimlet debug
