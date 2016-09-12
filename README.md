@@ -10,6 +10,7 @@ For every email we have the possibility to report it as spam to our system, by c
 If the operation was successfull the message "Email was reported as spam".  
  
 In order to access Spam Filter panel, config_template.xml should contain an admin credentials. This admin should own your domain in our Spam Filtering system.
+If your zimbra is configured over ssl, then your Spam Panel url should also use Https protocol. This is available for Logout url from your Spam Filter configuration.
 
 For custom branding, replace "zimletName" and "label" in com_zimbra_spamexperts.properties files. Default values are "SpamExperts".
 For a custom icon, just replace zimlet_icon.gif with your own. Be sure it will be a .gif file with dimensions 16x16 px.
@@ -42,3 +43,9 @@ Install the addon from Zimbra Admin Area:
 
 By default, the zimlet is available to all users, but from Zimbra administration, for each user you can set if 
 that user should have access to this zimlet or not.
+
+By default, zimbra debug mode for zimlets is enabled and all the information can be found in /opt/zimbra/log/mailbox.log
+If for some reason, debug mode was disabled, it can be enabled for an admin user, after executing the following :
+
+su - zimbra
+zmprov addAccountLogger <your admin user email address> zimbra.zimlet debug

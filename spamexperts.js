@@ -292,7 +292,8 @@ SpamExpertsZimlet.prototype._loginToControlPanel = function() {
                 var token = response.text;
                 if (token.length == 40) {
                     var panelUrl = this._controlPanelUrl;
-                    panelUrl = panelUrl.replace("http://", "https://");
+                    panelUrl = (location.protocol == "https:") ? panelUrl.replace("http://", "https://") : panelUrl.replace("https://", "http://");
+
                     document.getElementById("spamexperts_iframe").src = panelUrl+"/index.php?authticket="+token;
                 } else {
                     appCtxt.getAppController().setStatusMsg("Error: " + that.getMessage("userNotAllowed"), ZmStatusView.LEVEL_CRITICAL);
