@@ -15,6 +15,14 @@ SpamExpertsZimlet.prototype.init = function() {
     this._controlPanelUrl = this.getConfig("panelUrl");
     this._controlPanelUsername = this.getConfig("panelAdmin");
     this._controlPanelPassword = this.getConfig("panelPassword");
+    // Characters <, &, >, ", ' are considered illegal in xml and
+    // they were replaced with &lt; &amp; &gt; &quot; and &apos; in the config file
+    // but to have the correct password they need to be used in the correct form
+    this._controlPanelPassword = this._controlPanelPassword.replace(/&lt;/g, "<")
+        .replace(/&amp;/g, "&")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&apos;/g, "'");
 
     this._reportSpamUrl = this.getConfig("reportSpamUrl");
 

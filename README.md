@@ -9,7 +9,10 @@ This zimlet provides the following functionality:
 For every email we have the possibility to report it as spam to our system, by clicking right click and select "Report Spam". 
 If the operation was successfull the message "Email was reported as spam".  
  
-In order to access Spam Filter panel, config_template.xml should contain an admin credentials. This admin should own your domain in our Spam Filtering system.
+In order to access Spam Filter panel, config_template.xml should contain an admin credentials. Each usage of <, &, >, ", ' inside admin's password should be encoded as follows:
+&lt; (<), &amp; (&), &gt; (>), &quot; ("), and &apos; (').
+ 
+This admin should own your domain in our Spam Filtering system.
 If your zimbra is configured over ssl, then your Spam Panel url should also use Https protocol. This is available for Logout url from your Spam Filter configuration.
 
 For custom branding, replace "zimletName" and "label" in com_zimbra_spamexperts.properties files. Default values are "SpamExperts".
