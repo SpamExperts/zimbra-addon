@@ -9,7 +9,7 @@ This zimlet provides the following functionality:
 You may report any email as spam to our system by right-clicking it and selecting "Report Spam". If this is successful, the message "Email was reported as spam" will be shown. 
  
 In order to access Spam Filter panel, config_template.xml should contain an admin credentials. Each usage of <, &, >, ", ' inside admin's password should be encoded as follows:
-&lt; (<), &amp; (&), &gt; (>), &quot; ("), and &apos; (').
+&amp;lt; (<), &amp;amp; (&), &amp;gt; (>), &amp;quot; ("), and &amp;apos; (').
  
 This admin should own your domain in our spam filtering system.
 If your zimbra is configured over SSL, then your web interface URL should also use the HTTPS protocol. This is available for 'Logout URL' in your web interface configuration.
