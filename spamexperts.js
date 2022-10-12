@@ -164,7 +164,7 @@ SpamExpertsZimlet.prototype._reportSpam = function(msgId) {
         if (response.success == true) {
 
             var proxyServletUrl = [ZmZimletBase.PROXY, this._reportSpamUrl].join("");
-            var reqParam = "mailContent=" + response.text;
+            var reqParam = "mailContent=" + encodeURIComponent(response.text);
             var reqHeader = {"Content-Type": "application/x-www-form-urlencoded"};
 
             AjxRpc.invoke(reqParam, proxyServletUrl, reqHeader, new AjxCallback(this, function (response) {
